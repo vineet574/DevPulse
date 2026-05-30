@@ -36,7 +36,12 @@ mongoose.connect(process.env.MONGO_URI as string)
 })
 
 app.get("/", (req, res) => {
-    res.send("DevPulse Backend Running")
+
+    res.json({
+        backend: "online",
+        database: "connected"
+    })
+
 })
 
 app.use("/api/logs", logRoutes)

@@ -27,7 +27,7 @@ router.post("/register", async (req, res) => {
 
     const token = jwt.sign(
         { id: user._id },
-        "devpulse_secret",
+        process.env.JWT_SECRET as string,
         { expiresIn: "7d" }
     )
 
@@ -60,7 +60,7 @@ router.post("/login", async (req, res) => {
 
     const token = jwt.sign(
         { id: user._id },
-        "devpulse_secret",
+        process.env.JWT_SECRET as string,
         { expiresIn: "7d" }
     )
 

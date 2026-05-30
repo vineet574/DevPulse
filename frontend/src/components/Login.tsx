@@ -4,16 +4,24 @@ import { GoogleLogin } from "@react-oauth/google"
 
 const Login = () => {
 
+    const [isRegister, setIsRegister] = useState(false)
+
+    const [name, setName] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
 
-    const handleLogin = async () => {
+    const handleAuth = async () => {
 
         try {
 
+            const endpoint = isRegister
+                ? "/api/auth/register"
+                : "/api/auth/login"
+
             const response = await axios.post(
-                "http://localhost:5000/api/auth/login",
+                `${import.meta.env.VITE_BACKEND_URL}${endpoint}`,
                 {
+                    name,
                     email,
                     password
                 }
@@ -24,11 +32,16 @@ const Login = () => {
                 response.data.token
             )
 
+            localStorage.setItem(
+                "user",
+                JSON.stringify(response.data.user)
+            )
+
             window.location.reload()
 
         } catch (error) {
 
-            alert("Login Failed")
+            alert("Authentication Failed")
 
         }
 
@@ -40,11 +53,36 @@ const Login = () => {
 
             <div className="bg-slate-900 p-10 rounded-3xl shadow-2xl w-[400px] border border-cyan-500">
 
-                <h1 className="text-5xl font-bold text-cyan-400 text-center mb-8">
-                    DevPulse Login
+                <h1 className="text-5xl font-bold text-cyan-400 text-center mb-5">
+                    DevPulse
                 </h1>
 
+                <p
+                    onClick={() => setIsRegister(!isRegister)}
+                    className="text-center text-white cursor-pointer mb-6"
+                >
+                    {
+                        isRegister
+                            ? "Already have account? Login"
+                            : "Don't have account? Register"
+                    }
+                </p>
+
                 <div className="flex flex-col gap-5">
+
+                    {
+                        isRegister && (
+
+                            <input
+                                type="text"
+                                placeholder="Name"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                className="p-4 rounded-xl bg-slate-800 text-white border border-slate-700 outline-none focus:border-cyan-400"
+                            />
+
+                        )
+                    }
 
                     <input
                         type="email"
@@ -82,10 +120,14 @@ const Login = () => {
                     />
 
                     <button
-                        onClick={handleLogin}
+                        onClick={handleAuth}
                         className="bg-cyan-500 hover:bg-cyan-400 text-black font-bold p-4 rounded-xl transition-all duration-300"
                     >
-                        Login
+                        {
+                            isRegister
+                                ? "Register"
+                                : "Login"
+                        }
                     </button>
 
                 </div>
